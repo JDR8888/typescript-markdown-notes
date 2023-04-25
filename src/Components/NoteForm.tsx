@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 // gets a cool multi/custom select box from react-select
 import CreatableReactSelect from "react-select/creatable";
 import { NoteData } from '../App';
+import { v4 as uuidV4 } from 'uuid';
 
 type NoteFormProps = {
     onSubmit: (data: NoteData) => void
@@ -39,7 +40,13 @@ export default function NoteForm({onSubmit}: NoteFormProps ) {
                     <Col>
                     <Form.Group controlId='tags'>
                         <Form.Label>Tags</Form.Label>
-                        <CreatableReactSelect value={selectedTags.map(tag => {
+                        <CreatableReactSelect
+                        onCreateOption={label => {
+                            const newTag = {id: uuidV4(), label }
+                            onAddTag(newTag)
+                            setSelectedTags(prev => [...prev, newTag])
+                        }}
+                        value={selectedTags.map(tag => {
                             return { label: tag.label, value: tag.id }
                         })}
                         onChange={tags => {

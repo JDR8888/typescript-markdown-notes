@@ -8,6 +8,9 @@ import { useMemo } from 'react'
 import { useLocalStorage } from "./utils/useLocalStorage"
 import { v4 as uuidV4 } from "uuid"
 
+
+
+
 export type NoteData = {
   title: string 
   markdown: string 
@@ -33,11 +36,17 @@ export type RawNoteData = {
   tagIds: string[]
 }
 
+
+
 function App() {
 
   // store notes in local storage for persistance
   const [notes, setNotes] = useLocalStorage<RawNote[]>("NOTES", [])
   const [tags, setTags] = useLocalStorage<Tag[]>("TAGS", [])
+
+  function addTag(tag: Tag) {
+    setTags(prev => [...prev, tag])
+  }
 
   const notesWithTags = useMemo(() => {
     return notes.map(note => {
@@ -57,7 +66,15 @@ function App() {
         <Route path='/' element={<h1>expresso</h1>} />
         {/* for any wildcard routes we just send user to home */}
         <Route path="*" element={<Navigate to="/" />} />
-        <Route path="/new" element={<NewNote onSubmit={onCreateNote} />} />
+        <Route path="/new" 
+          element={
+            <NewNote 
+              onSubmit={onCreateNote} 
+              onAddTag={addTag} 
+              availableTags={tags} 
+            />
+          } 
+        />
         <Route path="/:id">
           <Route index element={<h1>Show</h1>} />
           <Route path="edit" element={<h1>Edit</h1>} />
