@@ -63,7 +63,7 @@ function App() {
   return (
     <Container className="my-5">
       <Routes>
-        <Route path='/' element={<NoteList notes={notes} availableTags={tags} />} />
+        <Route path='/' element={<NoteList notes={notesWithTags} availableTags={tags} />} />
         {/* for any wildcard routes we just send user to home */}
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/new" 
