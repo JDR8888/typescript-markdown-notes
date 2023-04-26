@@ -7,7 +7,7 @@ import  NewNote  from "./Components/NewNote"
 import { useMemo } from 'react'
 import { useLocalStorage } from "./utils/useLocalStorage"
 import { v4 as uuidV4 } from "uuid"
-
+import  NoteList  from "./Components/NoteList"
 
 
 
@@ -63,7 +63,7 @@ function App() {
   return (
     <Container className="my-5">
       <Routes>
-        <Route path='/' element={<h1>expresso</h1>} />
+        <Route path='/' element={<NoteList notes={notes} availableTags={tags} />} />
         {/* for any wildcard routes we just send user to home */}
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/new" 

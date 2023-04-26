@@ -1,20 +1,30 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, FormEvent } from 'react'
 import {Form, Stack, Row, Col, Button} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 // gets a cool multi/custom select box from react-select
 import CreatableReactSelect from "react-select/creatable";
-import { NoteData } from '../App';
+import { NoteData, Tag } from '../App';
 import { v4 as uuidV4 } from 'uuid';
 
 type NoteFormProps = {
-    onSubmit: (data: NoteData) => void
+    onSubmit: (data: NoteData) => void 
+    onAddTag: (tag: Tag) => void 
+    availableTags: Tag[]
 }
 
-export default function NoteForm({onSubmit}: NoteFormProps ) {
+export default function NoteForm({
+    onSubmit,
+    onAddTag,
+    availableTags,
+    // title="",
+    // markdown="",
+    //  tags=[]
+    }: NoteFormProps ) {
     // set up refs for pieces of form
     const titleRef = useRef<HTMLInputElement>(null)
     const markdownRef =useRef<HTMLTextAreaElement>(null)
     const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+    const navigate = useNavigate();
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault()
@@ -23,8 +33,10 @@ export default function NoteForm({onSubmit}: NoteFormProps ) {
             // ! basically says not to worry about potential null values because both inputs (title and markdown) are required w/ form control
             title: titleRef.current!.value,
             markdown: markdownRef.current!.value,
-            tags: []
+            tags: selectedTags,
         })
+        // move us back one page
+        navigate("..")
     }
 
     return (
@@ -47,6 +59,9 @@ export default function NoteForm({onSubmit}: NoteFormProps ) {
                             setSelectedTags(prev => [...prev, newTag])
                         }}
                         value={selectedTags.map(tag => {
+                            return { label: tag.label, value: tag.id }
+                        })}
+                        options={availableTags.map(tag => {
                             return { label: tag.label, value: tag.id }
                         })}
                         onChange={tags => {
