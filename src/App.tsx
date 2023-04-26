@@ -8,7 +8,9 @@ import { useMemo } from 'react'
 import { useLocalStorage } from "./utils/useLocalStorage"
 import { v4 as uuidV4 } from "uuid"
 import  NoteList  from "./Components/NoteList"
-
+import NoteLayout from "./Components/NoteLayout"
+import  Note  from "./Components/Note"
+import EditNote from "./Components/EditNote"
 
 
 export type NoteData = {
@@ -60,6 +62,19 @@ function App() {
     })
   }
 
+  function onUpdateNote (id: string, { tags, ...data }: NoteData ) {
+    setNotes(prevNotes => {
+      return prevNotes.map(note => {
+        if (note.id === id) {
+          return {...note, ...data, tagIds: tags.map(tag => tag.id) }
+        }
+        else {
+          return note
+        }
+      })
+    })
+  }
+
   return (
     <Container className="my-5">
       <Routes>
@@ -69,15 +84,22 @@ function App() {
         <Route path="/new" 
           element={
             <NewNote 
-              onSubmit={onCreateNote} 
+              onSubmit={onUpdateNote} 
               onAddTag={addTag} 
               availableTags={tags} 
             />
           } 
         />
-        <Route path="/:id">
-          <Route index element={<h1>Show</h1>} />
-          <Route path="edit" element={<h1>Edit</h1>} />
+        <Route path="/:id" element={<NoteLayout notes={notesWithTags} />}>
+          <Route index element={<Note />} />
+          <Route path="edit" element={
+            <EditNote
+              onSubmit={onUpdateNote}
+              onAddTag={addTag}
+              availableTags={tags}
+              />
+            } 
+          />
         </Route>
       </Routes>
       </Container>
